@@ -73,72 +73,63 @@ function createRepositoryElements(repository) {
   `;
   repositorySection.innerHTML = repoHTML;
 }
-
-// Also update the error button click handler in showError function
 function showError() {
   repositorySection.classList.add("hidden");
   errorSection.classList.remove("hidden");
   errorSection.innerHTML = "<p>Error fetching repositories</p>";
+  retrySection.innerHTML = ""; // Clear any existing buttons
 
   const retryButton = document.createElement("button");
   retryButton.className = "retry-button-error";
   retryButton.textContent = "Click to retry";
 
-  if (retrySection.children.length > 0) {
-    retrySection.removeChild(retrySection.lastChild);
-  }
-
   retrySection.appendChild(retryButton);
   retryButton.addEventListener("click", () => {
-    // Changed false to true here as well
     displayRepository(select.value, true);
   });
 }
 
 // 9. Main function to handle displaying repository
-// Update the displayRepository function
 async function displayRepository(language, addRetryButton = true) {
-  // Show loading spinner
   loadingSpinner.classList.remove("hidden");
   repositorySection.classList.add("hidden");
   errorSection.classList.add("hidden");
-  retrySection.innerHTML = ""; // Clear retry section
+  retrySection.innerHTML = ""; // Clear any existing buttons
 
   try {
     const repos = await getGitHubRepositories(language);
-    const randomRepo = getRandomRepository(repos);
 
+    // Check if repos exist and have items
+    if (!repos.items || repos.items.length === 0) {
+      throw new Error("No repositories found");
+    }
+
+    const randomRepo = getRandomRepository(repos);
     errorSection.classList.add("hidden");
     repositorySection.classList.remove("hidden");
     createRepositoryElements(randomRepo);
 
-    // Only add refresh button on success
+    // Add refresh button on success
     if (addRetryButton) {
       addRefreshButton();
     }
   } catch (error) {
-    // Only show error button on error, not refresh button
     showError();
   } finally {
     loadingSpinner.classList.add("hidden");
   }
 }
 
-// 10. Function to add refresh button (for successful states)
+// 10. Function to add refresh button
 function addRefreshButton() {
+  retrySection.innerHTML = ""; // Clear any existing buttons
+
   const refreshButton = document.createElement("button");
   refreshButton.className = "retry-button";
   refreshButton.textContent = "Refresh";
 
-  // Remove existing button if any
-  if (retrySection.children.length > 0) {
-    retrySection.removeChild(retrySection.lastChild);
-  }
-
-  // Add button and its click handler
   retrySection.appendChild(refreshButton);
   refreshButton.addEventListener("click", () => {
-    // Changed false to true to keep showing the refresh button
     displayRepository(select.value, true);
   });
 }
@@ -148,11 +139,10 @@ select.addEventListener("change", (event) => {
   if (event.target.value) {
     displayRepository(event.target.value, true);
   } else {
-    // Show initial state message
     repositorySection.classList.remove("hidden");
     repositorySection.innerHTML = "<p>Please select a language</p>";
     errorSection.classList.add("hidden");
-    retrySection.innerHTML = "";
+    retrySection.innerHTML = ""; // Clear any buttons
   }
 });
 
