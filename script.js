@@ -96,8 +96,9 @@ function showError() {
 }
 
 // 9. Main function to handle displaying repository
+// Update the displayRepository function
 async function displayRepository(language, addRetryButton = true) {
-  // Show loading spinner and hide other sections
+  // Show loading spinner
   loadingSpinner.classList.remove("hidden");
   repositorySection.classList.add("hidden");
   errorSection.classList.add("hidden");
@@ -111,11 +112,12 @@ async function displayRepository(language, addRetryButton = true) {
     repositorySection.classList.remove("hidden");
     createRepositoryElements(randomRepo);
 
-    // Add refresh button if needed
+    // Only add refresh button on success
     if (addRetryButton) {
       addRefreshButton();
     }
   } catch (error) {
+    // Only show error button on error, not refresh button
     showError();
   } finally {
     loadingSpinner.classList.add("hidden");
