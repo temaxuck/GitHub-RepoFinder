@@ -21,7 +21,7 @@ An interactive web application that helps users discover random GitHub repositor
 
 ## Project Requirements
 This project is created following the requirements from:
-[https://roadmap.sh/projects](https://roadmap.sh/projects)
+(https://roadmap.sh/projects/github-random-repo)
 
 ## Author
 Faiza Azam
