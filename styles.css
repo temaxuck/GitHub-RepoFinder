@@ -11,14 +11,31 @@ body {
   color: #24292e;
 }
 
+/* Common centered container styles */
+.container,
+.loading,
+.repository,
+.error,
+.retry-search {
+  margin: 0 auto;
+  max-width: 500px;
+}
+
 .container {
-  max-width: 800px;
+  max-width: 600px;
   margin: 2rem auto;
   padding: 1rem;
 }
 
-header {
+/* Text alignment */
+header,
+.language-section,
+.loading,
+.error {
   text-align: center;
+}
+
+header {
   margin-bottom: 2rem;
 }
 
@@ -29,7 +46,6 @@ h1 {
 
 /* Language Selection Styles */
 .language-section {
-  text-align: center;
   margin-bottom: 2rem;
 }
 
@@ -41,11 +57,12 @@ select {
   border-radius: 6px;
   background-color: white;
   cursor: pointer;
+  display: block;
+  margin: 0 auto;
 }
 
 /* Loading Spinner Styles */
 .loading {
-  text-align: center;
   padding: 2rem;
 }
 
@@ -80,62 +97,81 @@ select {
 .repository h2 {
   color: #0366d6;
   margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  word-break: break-word;
 }
 
 .repository p {
   color: #586069;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
 .project-stats {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
+  margin-top: 1rem;
 }
 
 .project-stats span {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   color: #586069;
+  font-size: 0.9rem;
 }
 
 .project-stats img {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 /* Error Message Styles */
 .error {
-  background-color: #ffdce0;
-  color: #86181d;
+  background-color: #ffe8e8;
+  color: #dc3545;
   padding: 1rem;
   border-radius: 6px;
-  text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
-/* Retry Button Styles */
-.retry-search {
-  text-align: center;
-}
-
-.retry-button {
-  background-color: #2ea44f;
-  color: white;
+/* Common Button Styles */
+.retry-button,
+.retry-button-error {
   border: none;
+  width: auto;
+  min-width: 200px;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  color: white;
   transition: background-color 0.2s;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Specific Button Colors */
+.retry-button {
+  background-color: #2ea44f;
 }
 
 .retry-button:hover {
   background-color: #2c974b;
 }
 
-/* Utility Classes */
+.retry-button-error {
+  background-color: #dc3545;
+  margin-top: 1rem;
+}
+
+.retry-button-error:hover {
+  background-color: #c82333;
+}
+
 .hidden {
   display: none;
 }

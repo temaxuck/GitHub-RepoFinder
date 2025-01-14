@@ -1,9 +1,9 @@
 // 1. First, we get all the HTML elements we'll need using DOM selectors
-const select = document.getElementById("languageSelect"); // Dropdown menu
-const repositorySection = document.querySelector(".repository"); // Where we'll show the repo
-const loadingSpinner = document.querySelector(".loading"); // Loading indicator
-const errorSection = document.querySelector(".error"); // Error messages
-const retrySection = document.querySelector(".retry-search"); // Refresh button section
+const select = document.getElementById("languageSelect");
+const repositorySection = document.querySelector(".repository");
+const loadingSpinner = document.querySelector(".loading");
+const errorSection = document.querySelector(".error");
+const retrySection = document.querySelector(".retry-search");
 
 // 2. Hide sections initially (adding CSS classes)
 repositorySection.classList.add("hidden");
@@ -12,30 +12,24 @@ errorSection.classList.add("hidden");
 
 // 3. Function to get programming languages from external API
 async function getProgrammingLanguages() {
-  // Fetch languages list from GitHub
   const response = await fetch(
     "https://raw.githubusercontent.com/kamranahmedse/githunt/master/src/components/filters/language-filter/languages.json"
   );
-  return await response.json(); // Convert response to JSON
+  return await response.json();
 }
 
 // 4. Function to populate the dropdown with languages
 async function populateLanguageSelect() {
-  // Get languages from API
   const languages = await getProgrammingLanguages();
-
-  // Create a document fragment (better for performance)
   const fragment = document.createDocumentFragment();
 
-  // For each language, create an option element
   languages.forEach((lang) => {
     const option = document.createElement("option");
-    option.value = lang.value; // e.g., "javascript"
-    option.textContent = lang.title; // e.g., "JavaScript"
+    option.value = lang.value;
+    option.textContent = lang.title;
     fragment.appendChild(option);
   });
 
-  // Add all options to select element
   select.appendChild(fragment);
 }
 
@@ -50,60 +44,69 @@ async function getGitHubRepositories(language) {
 // 6. Function to get a random repository from results
 function getRandomRepository(repositories) {
   const totalRepos = repositories.items.length;
-  // Get random index and return that repository
   return repositories.items[Math.floor(Math.random() * totalRepos)];
 }
 
 // 7. Function to create and display repository information
 function createRepositoryElements(repository) {
-  // Create HTML for repository display
   const repoHTML = `
-        <h2>${repository.name}</h2>
-        <p>${repository.description || "No description available"}</p>
-        <div class="project-stats">
-            <span>
-                <img src="img/circle-svgrepo-com.svg">
-                ${repository.language}
-            </span>
-            <span>
-                <img src="img/star-svgrepo-com.svg">
-                ${repository.stargazers_count}
-            </span>
-            <span>
-                <img src="img/git-fork-svgrepo-com.svg">
-                ${repository.forks}
-            </span>
-            <span>
-                <img src="img/exclamation-circle-svgrepo-com.svg">
-                ${repository.open_issues}
-            </span>
-        </div>
-    `;
-
-  // Put the HTML into the repository section
+    <h2>${repository.name}</h2>
+    <p>${repository.description || "No description available"}</p>
+    <div class="project-stats">
+      <span>
+        <img src="img/circle-svgrepo-com.svg">
+        ${repository.language}
+      </span>
+      <span>
+        <img src="img/star-svgrepo-com.svg">
+        ${repository.stargazers_count}
+      </span>
+      <span>
+        <img src="img/git-fork-svgrepo-com.svg">
+        ${repository.forks}
+      </span>
+      <span>
+        <img src="img/exclamation-circle-svgrepo-com.svg">
+        ${repository.open_issues}
+      </span>
+    </div>
+  `;
   repositorySection.innerHTML = repoHTML;
 }
 
-// 8. Function to show error message
+// Also update the error button click handler in showError function
 function showError() {
-  repositorySection.classList.add("hidden"); // Hide repository section
-  errorSection.classList.remove("hidden"); // Show error section
+  repositorySection.classList.add("hidden");
+  errorSection.classList.remove("hidden");
   errorSection.innerHTML = "<p>Error fetching repositories</p>";
+
+  const retryButton = document.createElement("button");
+  retryButton.className = "retry-button-error";
+  retryButton.textContent = "Click to retry";
+
+  if (retrySection.children.length > 0) {
+    retrySection.removeChild(retrySection.lastChild);
+  }
+
+  retrySection.appendChild(retryButton);
+  retryButton.addEventListener("click", () => {
+    // Changed false to true here as well
+    displayRepository(select.value, true);
+  });
 }
 
 // 9. Main function to handle displaying repository
 async function displayRepository(language, addRetryButton = true) {
-  // Show loading spinner
+  // Show loading spinner and hide other sections
   loadingSpinner.classList.remove("hidden");
   repositorySection.classList.add("hidden");
   errorSection.classList.add("hidden");
+  retrySection.innerHTML = ""; // Clear retry section
 
   try {
-    // Get repositories and select random one
     const repos = await getGitHubRepositories(language);
     const randomRepo = getRandomRepository(repos);
 
-    // Show repository
     errorSection.classList.add("hidden");
     repositorySection.classList.remove("hidden");
     createRepositoryElements(randomRepo);
@@ -113,18 +116,13 @@ async function displayRepository(language, addRetryButton = true) {
       addRefreshButton();
     }
   } catch (error) {
-    // Handle any errors
     showError();
-    if (addRetryButton) {
-      addRefreshButton();
-    }
   } finally {
-    // Always hide loading spinner when done
     loadingSpinner.classList.add("hidden");
   }
 }
 
-// 10. Function to add refresh button
+// 10. Function to add refresh button (for successful states)
 function addRefreshButton() {
   const refreshButton = document.createElement("button");
   refreshButton.className = "retry-button";
@@ -138,14 +136,23 @@ function addRefreshButton() {
   // Add button and its click handler
   retrySection.appendChild(refreshButton);
   refreshButton.addEventListener("click", () => {
-    displayRepository(select.value, false);
+    // Changed false to true to keep showing the refresh button
+    displayRepository(select.value, true);
   });
 }
 
 // 11. Event listener for language selection
 select.addEventListener("change", (event) => {
-  displayRepository(event.target.value, true);
+  if (event.target.value) {
+    displayRepository(event.target.value, true);
+  } else {
+    // Show initial state message
+    repositorySection.classList.remove("hidden");
+    repositorySection.innerHTML = "<p>Please select a language</p>";
+    errorSection.classList.add("hidden");
+    retrySection.innerHTML = "";
+  }
 });
 
-// 12. Initialize the app by populating languages
+// 12. Initialize the app
 populateLanguageSelect();
