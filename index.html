@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="./img/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub Random Repository Finder</title>
+    <meta
+      name="keywords"
+      content="JavaScript, GitHub repositories, programming languages, code explorer, random repository"
+    />
+    <meta name="author" content="Faiza Azam" />
+    <meta name="robots" content="index, follow" />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>GitHub Repository Finder</h1>
+      </header>
+
+      <!-- Language Selection Section -->
+      <div class="language-section">
+        <select id="languageSelect">
+          <option value="">Select a Language</option>
+          <!-- Other options will be populated by JavaScript -->
+        </select>
+      </div>
+
+      <!-- Loading Spinner Section -->
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading, please wait...</p>
+      </div>
+
+      <!-- Repository Display Section -->
+      <div class="repository">
+        <!-- Repository content will be inserted here by JavaScript -->
+      </div>
+
+      <!-- Error Message Section -->
+      <div class="error">
+        <!-- Error messages will be inserted here by JavaScript -->
+      </div>
+
+      <!-- Retry/Refresh Button Section -->
+      <div class="retry-search">
+        <!-- Refresh button will be inserted here by JavaScript -->
+      </div>
+    </div>
+
+    <!-- SVG Icons for Repository Stats -->
+    <div hidden>
+      <!-- These SVGs are used in the JavaScript -->
+      <img src="img/circle-svgrepo-com.svg" alt="Language Icon" />
+      <img src="img/star-svgrepo-com.svg" alt="Stars Icon" />
+      <img src="img/git-fork-svgrepo-com.svg" alt="Forks Icon" />
+      <img src="img/exclamation-circle-svgrepo-com.svg" alt="Issues Icon" />
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
