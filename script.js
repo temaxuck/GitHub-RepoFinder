@@ -1,3 +1,8 @@
+const GITHUB_RESULTS_LIMIT = 1000; /* see https://docs.github.com/en/rest/search/search?apiVersion=2022-11-28
+                                    * although we could surpass this limit:
+                                    * see https://stackoverflow.com/questions/37602893/github-search-limit-results */
+const cache = new Map(); // language: total_count_of_repositories
+
 // 1. DOM Elements
 const select = document.getElementById("languageSelect");
 const repositorySection = document.querySelector(".repository");
@@ -23,9 +28,33 @@ async function getProgrammingLanguages() {
   return await response.json();
 }
 
+async function getGitHubRepositoriesCount(language) {
+  if (cache.has(language)) return cache.get(language);
+
+  const response = await fetch(
+    `https://api.github.com/search/repositories?q=language:${language}&per_page=1`,
+  );
+  const json = await response.json();
+
+  return json.total_count;
+}
+
+async function getRandomGithubRepository(language) {
+  const count = await getGitHubRepositoriesCount(language);
+  const page =
+    Math.floor(Math.random() * Math.min(count, GITHUB_RESULTS_LIMIT)) + 1;
+
+  const response = await fetch(
+    `https://api.github.com/search/repositories?q=language:${language}&per_page=1&page=${page}&sort=stars`,
+  );
+  const json = await response.json();
+
+  return json.items[0];
+}
+
 async function getGitHubRepositories(language) {
   const response = await fetch(
-    `https://api.github.com/search/repositories?q=language:${language}`
+    `https://api.github.com/search/repositories?q=language:${language}&per_page=1`
   );
   return await response.json();
 }
@@ -100,14 +129,11 @@ async function displayRepository(language) {
   showLoading();
 
   try {
-    const repos = await getGitHubRepositories(language);
-    if (!repos.items?.length) {
+    const repo = await getRandomGithubRepository(language);
+    if (!repo) {
       throw new Error("No repositories found");
     }
-
-    const randomRepo =
-      repos.items[Math.floor(Math.random() * repos.items.length)];
-    showRepository(randomRepo);
+    showRepository(repo);
   } catch (error) {
     showError();
   } finally {
