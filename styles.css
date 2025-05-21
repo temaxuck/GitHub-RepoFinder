@@ -94,6 +94,10 @@ select {
   margin-bottom: 1rem;
 }
 
+.repository a {
+    text-decoration: none;
+}
+
 .repository h2 {
   color: #0366d6;
   margin-bottom: 0.5rem;

@@ -83,7 +83,7 @@ function showRepository(repository) {
   repositorySection.classList.remove("hidden");
 
   repositorySection.innerHTML = `
-    <h2>${repository.name}</h2>
+    <a href="${repository.html_url}"><h2>${repository.name}</h2></a>
     <p>${repository.description || "No description available"}</p>
     <div class="project-stats">
       <span>
